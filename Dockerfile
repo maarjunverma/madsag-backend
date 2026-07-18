@@ -1,4 +1,4 @@
-# Stage 1: Build the application
+# Stage 1: Build
 FROM node:20-slim AS build
 
 RUN apt-get update && apt-get install -y \
@@ -11,18 +11,16 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /opt/app
 COPY package*.json ./
 
-# Step 1: Install ALL packages without running ANY native compilation (avoids OOM from better-sqlite3)
-RUN npm install --legacy-peer-deps --ignore-scripts
-
-# Step 2: Compile ONLY bcrypt — required for /api/auth/local password hashing
-# We deliberately skip better-sqlite3 since production uses PostgreSQL (DATABASE_CLIENT=postgres)
-RUN npm rebuild bcrypt --build-from-source
+# --omit=optional skips better-sqlite3 (the OOM culprit).
+# All required deps including bcrypt (transitive via @strapi/plugin-users-permissions)
+# compile normally — no more 500 on /api/auth/local.
+RUN npm install --legacy-peer-deps --omit=optional
 
 COPY . .
 ENV NODE_ENV=production
 RUN npm run build
 
-# Stage 2: Lean production image
+# Stage 2: Production
 FROM node:20-slim
 RUN apt-get update && apt-get install -y \
     python3 \
