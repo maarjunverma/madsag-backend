@@ -1,9 +1,9 @@
 # Stage 1: Build the application
 FROM node:20-alpine AS build
-RUN apk update && apk add --no-cache build-base gcc autoconf automake zlib-dev libpng-dev vips-dev git > /dev/null 2>&1
+RUN apk update && apk add --no-cache build-base gcc autoconf automake zlib-dev libpng-dev vips-dev git python3
 WORKDIR /opt/app
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 COPY . .
 ENV NODE_ENV=production
 RUN npm run build
