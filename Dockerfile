@@ -3,7 +3,7 @@ FROM node:20-alpine AS build
 RUN apk update && apk add --no-cache build-base gcc autoconf automake zlib-dev libpng-dev vips-dev git > /dev/null 2>&1
 WORKDIR /opt/app
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY . .
 ENV NODE_ENV=production
 RUN npm run build
