@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "portfolio_items",
+  "info": {
+    "singularName": "portfolio-item",
+    "pluralName": "portfolio-items",
+    "displayName": "Portfolio Item",
+    "description": "MADSAG client project showcase"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 255
+    },
+    "client": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "challenge": {
+      "type": "text",
+      "required": false
+    },
+    "solution": {
+      "type": "text",
+      "required": false
+    },
+    "result": {
+      "type": "text",
+      "required": false
+    },
+    "tags": {
+      "type": "json",
+      "required": false
+    },
+    "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "liveUrl": {
+      "type": "string",
+      "required": false
+    }
+  }
+}

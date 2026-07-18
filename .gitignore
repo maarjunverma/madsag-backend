@@ -1,0 +1,24 @@
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+.tmp
+.cache
+.strapi
+.strapi-updater.json
+
+# Build files
+dist
+build
+
+# Dependency directories
+node_modules
+
+# Environmental variables
+.env
+
+# Database file (sqlite)
+database.db
+*.db

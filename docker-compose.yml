@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Database Service
+  postgres:
+    image: postgres:15-alpine
+    container_name: madsag-db
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME:-strapi}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-strapi_secure_password}
+      POSTGRES_DB: ${DATABASE_NAME:-madsag_strapi}
+    volumes:
+      - madsag_db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Strapi Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: madsag-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HOST: 0.0.0.0
+      PORT: 1337
+      NODE_ENV: production
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${DATABASE_NAME:-madsag_strapi}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-strapi}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-strapi_secure_password}
+      DATABASE_SSL: "false"
+      APP_KEYS: ${APP_KEYS:-replace_with_random_key_1,replace_with_random_key_2,replace_with_random_key_3,replace_with_random_key_4}
+      API_TOKEN_SALT: ${API_TOKEN_SALT:-replace_with_random_api_salt}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET:-replace_with_random_admin_jwt_secret}
+      JWT_SECRET: ${JWT_SECRET:-replace_with_random_jwt_secret}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT:-replace_with_random_transfer_salt}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-replace_with_random_encryption_key}
+    volumes:
+      - madsag_uploads:/opt/app/public/uploads
+    ports:
+      - "1337:1337"
+    restart: unless-stopped
+
+volumes:
+  madsag_db_data:
+  madsag_uploads:
